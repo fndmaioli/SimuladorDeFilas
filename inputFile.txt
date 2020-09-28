@@ -1,0 +1,39 @@
+#  Para especificar a fila a ser simulda use o seguinte padrao:
+#       queues:
+#           QueueName: <nome da fila>
+#           servers: <numero de servidores> (se nao utilizar este parametro, é entendido como 1)
+#           capacity: <capacidade maxima da fila> (se nao utilizar este parametro, é entendido como capacidade infinita)
+#           minArrival: <tempo minimo para ocorrer 1 chegada na fila> 
+#           maxArrival: <tempo maximo para ocorrer 1 chegada na fila>
+#           minService: <tempo minimo para ocorrer 1 atendimento e sair da fila>
+#           MaxService: <tempo maximo para ocorrer 1 atendimento e sair da fila>
+#
+#  Para especificar o modo que as filas se ligam, não deve se especificar a probilidade de um cliente sair do esquema
+#       network:
+#           <nome da fila>: <nome da fila alvo>-<probabilidade entre 0.0 e 1.0>
+#
+#  Para inserir os tempos em que ocorreram chegadas nas filas use o seguinte padrao:
+#       arrivals:
+#           <nome da fila>:<tempo de chegada>
+
+queues:
+    QueueName: Q1
+    servers: 2
+    capacity: 5
+    minArrival: 2 
+    maxArrival: 4
+    minService: 3
+    MaxService: 5
+    QueueName: Q2
+    servers: 2
+    capacity: 5
+    minArrival: 2 
+    maxArrival: 4
+    minService: 3
+    MaxService: 5
+
+network: 
+    Q1:Q2-0.5 
+
+arrivals:
+    Q1:3
