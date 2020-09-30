@@ -67,10 +67,9 @@ public class QueueController {
                     double eventTime = randGen.generateNewEventTime(arrival.queue.minService, arrival.queue.maxService);
                     scheduleEvent(new Event(EventType.DEPARTURE, eventTime, arrival.queue));
                 } else {
-                    double eventTime = randGen.generateNewEventTime(arrival.sourceQueue.minService, arrival.sourceQueue.maxService);
-                    scheduleEvent(new Event(EventType.CHANGEQUEUE, eventTime, queueNetwork.get(destination), arrival.sourceQueue));
+                    double eventTime = randGen.generateNewEventTime(arrival.queue.minService, arrival.queue.maxService);
+                    scheduleEvent(new Event(EventType.CHANGEQUEUE, eventTime, arrival.queue, queueNetwork.get(destination)));
                 }
-                
             }
         // se nao entra na fila
         } else {
@@ -94,33 +93,51 @@ public class QueueController {
         // se fila >= servers
         if (departure.queue.queueCount >= departure.queue.servers) {
             // agenda saida
-            double eventTime = randGen.generateNewEventTime(departure.queue.minService, departure.queue.maxService);
-            scheduleEvent(new Event(EventType.DEPARTURE, eventTime, departure.queue));
+            String destination = departure.queue.getDestination(randGen.generateNewEventTime(0,1));
+            if (destination.isEmpty()) {
+                double eventTime = randGen.generateNewEventTime(departure.queue.minService, departure.queue.maxService);
+                scheduleEvent(new Event(EventType.DEPARTURE, eventTime, departure.queue));
+            } else { 
+                double eventTime = randGen.generateNewEventTime(departure.queue.minService, departure.queue.maxService);
+                scheduleEvent(new Event(EventType.CHANGEQUEUE, eventTime, departure.queue, queueNetwork.get(destination)));
+            }
         }  
     }
 
     public void changeQueue(Event change) { 
         this.time = change.time;
         change.queue.computeQueueState(this.time);
-        change.sourceQueue.computeQueueState(this.time);
+        change.nextQueue.computeQueueState(this.time);
         
-        change.sourceQueue.queueCount -= 1;
-        if (change.sourceQueue.queueCount >= change.sourceQueue.servers) {
-            String destination = change.sourceQueue.getDestination(randGen.generateNewEventTime(0,1));
+        if (change.queue.queueCount > 0) {
+            change.queue.queueCount--;
+        }
+        if (change.queue.queueCount >= change.queue.servers) {
+            String destination = change.queue.getDestination(randGen.generateNewEventTime(0,1));
             if (destination.isEmpty()) {
                 double eventTime = randGen.generateNewEventTime(change.queue.minService, change.queue.maxService);
                 scheduleEvent(new Event(EventType.DEPARTURE, eventTime, change.queue));
             } else { 
-                double eventTime = randGen.generateNewEventTime(change.sourceQueue.minService, change.sourceQueue.maxService);
-                scheduleEvent(new Event(EventType.CHANGEQUEUE, eventTime, queueNetwork.get(destination), change.sourceQueue));
+                double eventTime = randGen.generateNewEventTime(change.queue.minService, change.queue.maxService);
+                scheduleEvent(new Event(EventType.CHANGEQUEUE, eventTime, change.queue, queueNetwork.get(destination)));
             }
         }
 
-        change.queue.queueCount += 1;
-        if (change.queue.queueCount <= change.queue.servers) { 
-            double eventTime = randGen.generateNewEventTime(change.queue.minService, change.queue.maxService);
-            scheduleEvent(new Event(EventType.DEPARTURE, eventTime, change.queue));
-        }
+        if (change.nextQueue.queueCount < change.nextQueue.capacity) {
+            change.nextQueue.queueCount ++;
+            if (change.nextQueue.queueCount <= change.nextQueue.servers) { 
+                String destination = change.nextQueue.getDestination(randGen.generateNewEventTime(0,1));
+                if (destination.isEmpty()) {
+                    double eventTime = randGen.generateNewEventTime(change.nextQueue.minService, change.nextQueue.maxService);
+                    scheduleEvent(new Event(EventType.DEPARTURE, eventTime, change.nextQueue));
+                } else { 
+                    double eventTime = randGen.generateNewEventTime(change.nextQueue.minService, change.nextQueue.maxService);
+                    scheduleEvent(new Event(EventType.CHANGEQUEUE, eventTime, change.nextQueue, queueNetwork.get(destination)));
+                }
+            }
+        } else {
+            change.nextQueue.computeLost();
+        }   
     }
 
     public void scheduleEvent(Event event) {

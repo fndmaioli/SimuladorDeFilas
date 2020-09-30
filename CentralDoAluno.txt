@@ -17,21 +17,28 @@
 #           <nome da fila>:<tempo de chegada>
 
 queues:
-    QueueName: Q1
-    servers: 2
-    capacity: 3
-    minArrival: 2 
-    maxArrival: 3
-    minService: 2
-    MaxService: 5
-    QueueName: Q2
+    QueueName: Senha
     servers: 1
-    capacity: 3
-    minService: 3
-    MaxService: 5
+    minArrival: 1.0
+    maxArrival: 5.0
+    minService: 0.08
+    maxService: 1
+    QueueName: Atendimento
+    servers: 3
+    capacity: 10
+    minService: 5.0
+    maxService: 15.0
+    QueueName: Financeiro
+    servers: 2
+    capacity: 10
+    minService: 5.0
+    maxService: 25.0
 
 network: 
-    Q1:Q2-1.0 
+    Senha:Atendimento-0.8
+    Senha:Financeiro-0.2
+    Atendimento:Financeiro-0.3
+    Financeiro:Atendimento-0.5
 
 arrivals:
-    Q1:2.5
+    Senha:1.0
