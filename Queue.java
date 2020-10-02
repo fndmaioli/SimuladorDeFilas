@@ -40,10 +40,12 @@ public class Queue {
         }
 
         int targetSize = targets.size();
-        newTarget.prob += targets.get(targetSize-1).prob;
-         if (newTarget.prob == 1.0) {
+        if (newTarget.prob == 1.0) {
             targets.get(targetSize -1).target = newTarget.target;
         } else {
+            if (targetSize > 1) {
+                newTarget.prob += targets.get(targetSize-2).prob;
+            }
             targets.add(targetSize -1, newTarget);
         }
     }
