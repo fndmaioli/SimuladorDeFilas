@@ -21,7 +21,7 @@ public class Main {
             for (int i = 0; i<5; i++) {
                 HashMap<String, Queue> cleanQueueNetwork = fileReader.getQueueNetwork();
                 ArrayList<Event> cleanEvents = fileReader.getEvents();
-                QueueController queueController = new QueueController(cleanQueueNetwork, cleanEvents);
+                QueueController queueController = new QueueController(cleanQueueNetwork, cleanEvents, 20.0);
                 queueController.runSimulation();
                 rt.addResults(queueController.queueNetwork);
                 rt.addTime(queueController.time);

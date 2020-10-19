@@ -10,6 +10,10 @@ public class RandomNumberGenerator {
         this.seed = java.time.LocalTime.now().getNano()/1000000;
     }
 
+    public RandomNumberGenerator(double seed){
+        this.seed = seed;
+    }
+
     public double generateRandomNumber() {
         seed = (a * seed + c) % max;
         return seed / max;

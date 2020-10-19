@@ -1,4 +1,3 @@
-import java.text.DecimalFormat;
 import java.util.ArrayList;
 import java.util.HashMap;
 
@@ -16,11 +15,18 @@ public class QueueController {
         for(Event event : events) {
             scheduleEvent(event);
         }
+        this.randGen = new RandomNumberGenerator();
+    }
+
+    public QueueController(HashMap<String, Queue> queueNetwork, ArrayList<Event> events, double seed) {
+        this.queueNetwork = queueNetwork;
+        for(Event event : events) {
+            scheduleEvent(event);
+        }
+        this.randGen = new RandomNumberGenerator(seed);
     }
 
     public void runSimulation() {
-        this.randGen = new RandomNumberGenerator();
-        
         Event nextEvent;
         while (count > 0) {
             
