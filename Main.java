@@ -1,4 +1,6 @@
 import java.io.IOException;
+import java.util.HashMap;
+import java.util.ArrayList;
 import java.io.File;
 
 public class Main {
@@ -14,8 +16,13 @@ public class Main {
             FileReader fileReader = new FileReader();
             fileReader.readInputFile(file);
             
-            QueueController queueController = new QueueController(fileReader.queueNetwork, fileReader.events);
-            queueController.runSimulation();
+            for (int i = 0; i<5; i++) {
+                HashMap<String, Queue> cleanQueueNetwork = fileReader.getQueueNetwork();
+                ArrayList<Event> cleanEvents = fileReader.getEvents();
+                QueueController queueController = new QueueController(cleanQueueNetwork, cleanEvents);
+                queueController.runSimulation();
+            }
+            
         } else {
             System.out.println("Insira um nome de arquivo válido");
         }

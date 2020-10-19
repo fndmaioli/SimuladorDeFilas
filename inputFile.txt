@@ -23,12 +23,12 @@ queues:
     minArrival: 2 
     maxArrival: 3
     minService: 2
-    MaxService: 5
+    maxService: 5
     QueueName: Q2
     servers: 1
     capacity: 3
     minService: 3
-    MaxService: 5
+    maxService: 5
 
 network: 
     Q1:Q2-1.0 

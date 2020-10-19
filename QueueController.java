@@ -5,7 +5,7 @@ import java.util.HashMap;
 public class QueueController {
 
     public HashMap<String, Queue> queueNetwork = new HashMap<String, Queue>();
-    public double time = 0;
+    public double time = 0.0;
     public ArrayList<Event> eventsSchedule = new ArrayList<Event>();
     public RandomNumberGenerator randGen;
 
@@ -18,8 +18,9 @@ public class QueueController {
         }
     }
 
-    public void runSimulation() {
+    public HashMap<String, Queue> runSimulation() {
         this.randGen = new RandomNumberGenerator();
+        
         Event nextEvent;
         while (count > 0) {
             
@@ -32,10 +33,11 @@ public class QueueController {
                 departure(nextEvent);
             }
         }
-        System.out.println("Tempo total: " + this.time);
 
+        System.out.println("Tempo total: " + this.time);
         for(String keyName : queueNetwork.keySet()) {
             System.out.println("Probabilidade de cada estado da fila: " + keyName);
+            
             for(Integer key : queueNetwork.get(keyName).queueStates.keySet()) {
                 if (key >= 0) {
                     System.out.println(key + "   -   tempo: " + new DecimalFormat("#.##").format(queueNetwork.get(keyName).queueStates.get(key)) + "   -   " + new DecimalFormat("#.##").format((queueNetwork.get(keyName).queueStates.get(key) * 100 )/this.time) + "%");
@@ -48,36 +50,37 @@ public class QueueController {
             }
         }
 
-
+        return queueNetwork;
     }
 
     public void arrival(Event arrival){
         // contabiliza tempo
         this.time = arrival.time;
-        arrival.queue.computeQueueState(this.time);
+        Queue arrivalQueue = this.queueNetwork.get(arrival.queue);
+        arrivalQueue.computeQueueState(this.time);
         // se fila < fila.capacity
-        if (arrival.queue.queueCount < arrival.queue.capacity) {
+        if (arrivalQueue.queueCount < arrivalQueue.capacity) {
             // fila++
-            arrival.queue.queueCount++;
+            arrivalQueue.queueCount++;
             // se fila <= 1
-            if (arrival.queue.queueCount <= arrival.queue.servers) {
+            if (arrivalQueue.queueCount <= arrivalQueue.servers) {
                 // agenda saida
-                String destination = arrival.queue.getDestination(randGen.generateNewEventTime(0,1));
+                String destination = arrivalQueue.getDestination(randGen.generateNewEventTime(0,1));
                 if (destination.isEmpty()) {
-                    double eventTime = randGen.generateNewEventTime(arrival.queue.minService, arrival.queue.maxService);
+                    double eventTime = randGen.generateNewEventTime(arrivalQueue.minService, arrivalQueue.maxService);
                     scheduleEvent(new Event(EventType.DEPARTURE, eventTime, arrival.queue));
                 } else {
-                    double eventTime = randGen.generateNewEventTime(arrival.queue.minService, arrival.queue.maxService);
-                    scheduleEvent(new Event(EventType.CHANGEQUEUE, eventTime, arrival.queue, queueNetwork.get(destination)));
+                    double eventTime = randGen.generateNewEventTime(arrivalQueue.minService, arrivalQueue.maxService);
+                    scheduleEvent(new Event(EventType.CHANGEQUEUE, eventTime, arrival.queue, destination));
                 }
             }
         // se nao entra na fila
         } else {
-            arrival.queue.computeLost();
+            arrivalQueue.computeLost();
         }   
         // agenda chegada
-        if (arrival.queue.minArrival > -1 && arrival.queue.maxArrival > -1) {
-            double eventTime = randGen.generateNewEventTime(arrival.queue.minArrival, arrival.queue.maxArrival);
+        if (arrivalQueue.minArrival > -1 && arrivalQueue.maxArrival > -1) {
+            double eventTime = randGen.generateNewEventTime(arrivalQueue.minArrival, arrivalQueue.maxArrival);
             scheduleEvent(new Event(EventType.ARRIVAL, eventTime, arrival.queue));
         }
     }
@@ -85,58 +88,61 @@ public class QueueController {
     public void departure(Event departure) {
         // contabiliza tempo
         this.time = departure.time;
-        departure.queue.computeQueueState(this.time);
+        Queue departureQueue = this.queueNetwork.get(departure.queue);
+        departureQueue.computeQueueState(this.time);
         // fila--
-        if (departure.queue.queueCount > 0) {
-            departure.queue.queueCount--;
+        if (departureQueue.queueCount > 0) {
+            departureQueue.queueCount--;
         }
         // se fila >= servers
-        if (departure.queue.queueCount >= departure.queue.servers) {
+        if (departureQueue.queueCount >= departureQueue.servers) {
             // agenda saida
-            String destination = departure.queue.getDestination(randGen.generateNewEventTime(0,1));
+            String destination = departureQueue.getDestination(randGen.generateNewEventTime(0,1));
             if (destination.isEmpty()) {
-                double eventTime = randGen.generateNewEventTime(departure.queue.minService, departure.queue.maxService);
+                double eventTime = randGen.generateNewEventTime(departureQueue.minService, departureQueue.maxService);
                 scheduleEvent(new Event(EventType.DEPARTURE, eventTime, departure.queue));
             } else { 
-                double eventTime = randGen.generateNewEventTime(departure.queue.minService, departure.queue.maxService);
-                scheduleEvent(new Event(EventType.CHANGEQUEUE, eventTime, departure.queue, queueNetwork.get(destination)));
+                double eventTime = randGen.generateNewEventTime(departureQueue.minService, departureQueue.maxService);
+                scheduleEvent(new Event(EventType.CHANGEQUEUE, eventTime, departure.queue, destination));
             }
         }  
     }
 
     public void changeQueue(Event change) { 
         this.time = change.time;
-        change.queue.computeQueueState(this.time);
-        change.nextQueue.computeQueueState(this.time);
+        Queue changeQueue = this.queueNetwork.get(change.queue);
+        Queue changeNextQueue = this.queueNetwork.get(change.nextQueue);
+        changeQueue.computeQueueState(this.time);
+        changeNextQueue.computeQueueState(this.time);
         
-        if (change.queue.queueCount > 0) {
-            change.queue.queueCount--;
+        if (changeQueue.queueCount > 0) {
+            changeQueue.queueCount--;
         }
-        if (change.queue.queueCount >= change.queue.servers) {
-            String destination = change.queue.getDestination(randGen.generateNewEventTime(0,1));
+        if (changeQueue.queueCount >= changeQueue.servers) {
+            String destination = changeQueue.getDestination(randGen.generateNewEventTime(0,1));
             if (destination.isEmpty()) {
-                double eventTime = randGen.generateNewEventTime(change.queue.minService, change.queue.maxService);
+                double eventTime = randGen.generateNewEventTime(changeQueue.minService, changeQueue.maxService);
                 scheduleEvent(new Event(EventType.DEPARTURE, eventTime, change.queue));
             } else { 
-                double eventTime = randGen.generateNewEventTime(change.queue.minService, change.queue.maxService);
-                scheduleEvent(new Event(EventType.CHANGEQUEUE, eventTime, change.queue, queueNetwork.get(destination)));
+                double eventTime = randGen.generateNewEventTime(changeQueue.minService, changeQueue.maxService);
+                scheduleEvent(new Event(EventType.CHANGEQUEUE, eventTime, change.queue, destination));
             }
         }
 
-        if (change.nextQueue.queueCount < change.nextQueue.capacity) {
-            change.nextQueue.queueCount ++;
-            if (change.nextQueue.queueCount <= change.nextQueue.servers) { 
-                String destination = change.nextQueue.getDestination(randGen.generateNewEventTime(0,1));
+        if (changeNextQueue.queueCount < changeNextQueue.capacity) {
+            changeNextQueue.queueCount ++;
+            if (changeNextQueue.queueCount <= changeNextQueue.servers) { 
+                String destination = changeNextQueue.getDestination(randGen.generateNewEventTime(0,1));
                 if (destination.isEmpty()) {
-                    double eventTime = randGen.generateNewEventTime(change.nextQueue.minService, change.nextQueue.maxService);
+                    double eventTime = randGen.generateNewEventTime(changeNextQueue.minService, changeNextQueue.maxService);
                     scheduleEvent(new Event(EventType.DEPARTURE, eventTime, change.nextQueue));
                 } else { 
-                    double eventTime = randGen.generateNewEventTime(change.nextQueue.minService, change.nextQueue.maxService);
-                    scheduleEvent(new Event(EventType.CHANGEQUEUE, eventTime, change.nextQueue, queueNetwork.get(destination)));
+                    double eventTime = randGen.generateNewEventTime(changeNextQueue.minService, changeNextQueue.maxService);
+                    scheduleEvent(new Event(EventType.CHANGEQUEUE, eventTime, change.nextQueue, destination));
                 }
             }
         } else {
-            change.nextQueue.computeLost();
+            changeNextQueue.computeLost();
         }   
     }
 

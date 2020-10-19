@@ -2,12 +2,12 @@ import java.util.*;
 
 public class Queue {
 
-    public ArrayList<Target> targets;
-    
     public String name;
     public int queueCount;
     public double lastEventTime;
     public HashMap<Integer, Double> queueStates;
+
+    public ArrayList<Target> targets;
 
     public int servers;
     public double capacity;

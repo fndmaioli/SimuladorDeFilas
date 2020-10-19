@@ -5,10 +5,37 @@ import java.util.ArrayList;
 
 public class FileReader {
 
-    public HashMap<String, Queue> queueNetwork = new HashMap<String, Queue>();
-    public ArrayList<Event> events = new ArrayList<Event>();
+    private HashMap<String, Queue> queueNetwork = new HashMap<String, Queue>();
+    private ArrayList<Event> events = new ArrayList<Event>();
 
     public FileReader() {}
+
+    public ArrayList<Event> getEvents() {
+        ArrayList<Event> auxArray = new ArrayList<Event>();
+        for(Event ev: events) {
+            auxArray.add(new Event(ev.type, ev.time, ev.queue));
+        }
+        return auxArray;
+    }
+    // IS PROBABLY CREATING 2 DIFFERENT INSTANCES FOR THE QUEUE, WHICH IS FUCKING THE RESULT
+    public HashMap<String, Queue> getQueueNetwork() {
+
+        HashMap<String, Queue> auxMap = new HashMap<String, Queue>();
+
+        for(String queueKey: this.queueNetwork.keySet()) {
+            Queue auxQueue1 = this.queueNetwork.get(queueKey);
+            Queue auxQueue2 = new Queue(queueKey);
+            auxQueue2.targets = auxQueue1.targets;
+            auxQueue2.servers = auxQueue1.servers;
+            auxQueue2.capacity = auxQueue1.capacity;
+            auxQueue2.minArrival = auxQueue1.minArrival;
+            auxQueue2.maxArrival = auxQueue1.maxArrival;
+            auxQueue2.minService = auxQueue1.minService;
+            auxQueue2.maxService = auxQueue1.maxService;
+            auxMap.put(queueKey, auxQueue2);
+        }
+        return auxMap;
+    }
 
     public void readInputFile(File file) {
         try {
@@ -51,7 +78,7 @@ public class FileReader {
             String[] lineArray = line.split(":");
             
             Double arrivalTime = Double.parseDouble(lineArray[1].strip());
-            Queue arrivalQueue = queueNetwork.get(lineArray[0].strip());
+            String arrivalQueue = lineArray[0].strip();
 
             Event newEvent = new Event(EventType.ARRIVAL, arrivalTime, arrivalQueue);
             events.add(newEvent);
@@ -92,9 +119,8 @@ public class FileReader {
             String[] lineArray = line.split(":");
             
             if (lineArray[0].equalsIgnoreCase("QueueName")) {
-                
-                Queue newQueue = new Queue(lineArray[1]);
                 currentQueueName = lineArray[1].strip();
+                Queue newQueue = new Queue(currentQueueName);
                 queueNetwork.put(currentQueueName, newQueue);
             } 
             else {
