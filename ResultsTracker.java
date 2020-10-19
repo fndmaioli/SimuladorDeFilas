@@ -4,9 +4,10 @@ import java.util.HashMap;
 public class ResultsTracker {
 
     public HashMap<String, HashMap<Integer, Double>> queuesResult = new HashMap<String, HashMap<Integer, Double>>();
+    public Double time;
 
     public ResultsTracker() {
-
+        this.time = 0.0;
     }
 
     public void addResults(HashMap<String, Queue> newResults) {
@@ -30,22 +31,26 @@ public class ResultsTracker {
         }
     }
 
+    public void addTime(Double time) {
+        this.time += time;
+    }
+
     public void printResults() {
 
-        // System.out.println("Tempo total: " + this.time);
-        // for(String keyName : queueNetwork.keySet()) {
-        //     System.out.println("Probabilidade de cada estado da fila: " + keyName);
-        //     for(Integer key : queueNetwork.get(keyName).queueStates.keySet()) {
-        //         if (key >= 0) {
-        //             System.out.println(key + "   -   tempo: " + new DecimalFormat("#.##").format(queueNetwork.get(keyName).queueStates.get(key)) + "   -   " + new DecimalFormat("#.##").format((queueNetwork.get(keyName).queueStates.get(key) * 100 )/this.time) + "%");
-        //         }
-        //     }
-        //     if (queueNetwork.get(keyName).queueStates.containsKey(-1)) {
-        //         System.out.println("Numero de perdas: " + queueNetwork.get(keyName).queueStates.get(-1));
-        //     } else {
-        //         System.out.println("Numero de perdas: " + 0);
-        //     }
-        // }
+        System.out.println("Tempo total: " + this.time/5);
+        for(String keyName : queuesResult.keySet()) {
+            System.out.println("Probabilidade de cada estado da fila: " + keyName);
+            for(Integer key : queuesResult.get(keyName).keySet()) {
+                if (key >= 0) {
+                    System.out.println(key + "   -   tempo: " + new DecimalFormat("#.##").format(queuesResult.get(keyName).get(key)/5) + "   -   " + new DecimalFormat("#.##").format((queuesResult.get(keyName).get(key) * 100 )/this.time) + "%");
+                }
+            }
+            if (queuesResult.get(keyName).containsKey(-1)) {
+                System.out.println("Numero de perdas: " + queuesResult.get(keyName).get(-1)/5);
+            } else {
+                System.out.println("Numero de perdas: " + 0);
+            }
+        }
 
     }
 }

@@ -18,7 +18,7 @@ public class QueueController {
         }
     }
 
-    public HashMap<String, Queue> runSimulation() {
+    public void runSimulation() {
         this.randGen = new RandomNumberGenerator();
         
         Event nextEvent;
@@ -33,24 +33,6 @@ public class QueueController {
                 departure(nextEvent);
             }
         }
-
-        System.out.println("Tempo total: " + this.time);
-        for(String keyName : queueNetwork.keySet()) {
-            System.out.println("Probabilidade de cada estado da fila: " + keyName);
-            
-            for(Integer key : queueNetwork.get(keyName).queueStates.keySet()) {
-                if (key >= 0) {
-                    System.out.println(key + "   -   tempo: " + new DecimalFormat("#.##").format(queueNetwork.get(keyName).queueStates.get(key)) + "   -   " + new DecimalFormat("#.##").format((queueNetwork.get(keyName).queueStates.get(key) * 100 )/this.time) + "%");
-                }
-            }
-            if (queueNetwork.get(keyName).queueStates.containsKey(-1)) {
-                System.out.println("Numero de perdas: " + queueNetwork.get(keyName).queueStates.get(-1));
-            } else {
-                System.out.println("Numero de perdas: " + 0);
-            }
-        }
-
-        return queueNetwork;
     }
 
     public void arrival(Event arrival){
