@@ -59,6 +59,7 @@ public class ResultsTracker {
         }
     }
 
+    // Cálculo da Populacao Média
     public double averagePopulation(Queue queue) {
         double sum = 0.0;
         for(Integer key : queue.queueStates.keySet()) {
@@ -69,6 +70,7 @@ public class ResultsTracker {
         return sum;
     }
 
+    // Cálculo da Vazão
     public double flowRate(Queue queue) {
         double sum = 0.0;
         for(Integer key : queue.queueStates.keySet()) {
@@ -79,6 +81,7 @@ public class ResultsTracker {
         return sum;
     }
 
+    // Cálculo da Utilização
     public void utilization(Queue queue) {
         double sum = 0.0;
         for(Integer key : queue.queueStates.keySet()) {
@@ -88,6 +91,7 @@ public class ResultsTracker {
         System.out.println("Utilização: " + new DecimalFormat("#.##").format(sum));
     }
 
+    // Cálculo do Tempo de Resposta
     public void responseTime(double averagePopulation, double flowRate) {
         System.out.println("Tempo de resposta: " + new DecimalFormat("#.##").format(averagePopulation/flowRate));
     }
