@@ -8,22 +8,24 @@ public class QueueController {
     public ArrayList<Event> eventsSchedule = new ArrayList<Event>();
     public RandomNumberGenerator randGen;
 
-    public int count = 100000;
+    public int count;
 
-    public QueueController(HashMap<String, Queue> queueNetwork, ArrayList<Event> events) {
+    public QueueController(HashMap<String, Queue> queueNetwork, ArrayList<Event> events, int numPerSeed) {
         this.queueNetwork = queueNetwork;
         for(Event event : events) {
             scheduleEvent(event);
         }
         this.randGen = new RandomNumberGenerator();
+        this.count = numPerSeed;
     }
 
-    public QueueController(HashMap<String, Queue> queueNetwork, ArrayList<Event> events, double seed) {
+    public QueueController(HashMap<String, Queue> queueNetwork, ArrayList<Event> events, double seed, int numPerSeed) {
         this.queueNetwork = queueNetwork;
         for(Event event : events) {
             scheduleEvent(event);
         }
         this.randGen = new RandomNumberGenerator(seed);
+        this.count = numPerSeed;
     }
 
     public void runSimulation() {

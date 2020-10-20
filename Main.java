@@ -17,14 +17,23 @@ public class Main {
             fileReader.readInputFile(file);
 
             ResultsTracker rt = new ResultsTracker();
-            
-            for (int i = 0; i<5; i++) {
+            if (fileReader.getSeeds().size() == 0) {
                 HashMap<String, Queue> cleanQueueNetwork = fileReader.getQueueNetwork();
                 ArrayList<Event> cleanEvents = fileReader.getEvents();
-                QueueController queueController = new QueueController(cleanQueueNetwork, cleanEvents, 20.0);
+                QueueController queueController = new QueueController(cleanQueueNetwork, cleanEvents, fileReader.getNumbersPerSeed());
                 queueController.runSimulation();
                 rt.addResults(queueController.queueNetwork);
                 rt.addTime(queueController.time);
+            }
+            else {
+                for (double seed : fileReader.getSeeds()) {
+                    HashMap<String, Queue> cleanQueueNetwork = fileReader.getQueueNetwork();
+                    ArrayList<Event> cleanEvents = fileReader.getEvents();
+                    QueueController queueController = new QueueController(cleanQueueNetwork, cleanEvents, seed, fileReader.getNumbersPerSeed());
+                    queueController.runSimulation();
+                    rt.addResults(queueController.queueNetwork);
+                    rt.addTime(queueController.time);
+                }
             }
             rt.printResults();
             

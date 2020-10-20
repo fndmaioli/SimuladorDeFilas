@@ -1,20 +1,38 @@
-#  Para especificar a fila a ser simulda use o seguinte padrao:
+#  Para especificar o modelo de filas a ser simulado use o seguinte padrão:
+#  Obs.: Se não utilizar o parametro servers, será utilizado apenas 1 servidor naquela fila
+#  Obs.: Se não utilizar o parametro capacity, será considerada como infinita a capacidade da fila
+#
 #       queues:
 #           QueueName: <nome da fila>
-#           servers: <numero de servidores> (se nao utilizar este parametro, é entendido como 1)
-#           capacity: <capacidade maxima da fila> (se nao utilizar este parametro, é entendido como capacidade infinita)
+#           servers: <numero de servidores> 
+#           capacity: <capacidade maxima da fila>
 #           minArrival: <tempo minimo para ocorrer 1 chegada na fila> 
 #           maxArrival: <tempo maximo para ocorrer 1 chegada na fila>
 #           minService: <tempo minimo para ocorrer 1 atendimento e sair da fila>
 #           MaxService: <tempo maximo para ocorrer 1 atendimento e sair da fila>
+#           QueueName: <nome da fila>
+#           servers: <numero de servidores> 
+#           capacity: <capacidade maxima da fila> 
+#           minService: <tempo minimo para ocorrer 1 atendimento e sair da fila>
+#           MaxService: <tempo maximo para ocorrer 1 atendimento e sair da fila>
 #
-#  Para especificar o modo que as filas se ligam, não deve se especificar a probilidade de um cliente sair do esquema
+#  Para especificar o modo que as filas se ligam:
+#  Obs.: Não deve-se especificar a probabilidade de um cliente sair da fila e ir embora/não entrar em outra fila
+#
 #       network:
 #           <nome da fila>: <nome da fila alvo>-<probabilidade entre 0.0 e 1.0>
 #
-#  Para inserir os tempos em que ocorreram chegadas nas filas use o seguinte padrao:
+#  Para inserir os tempos em que ocorrem chegadas nas filas use o seguinte padrão:
 #       arrivals:
 #           <nome da fila>:<tempo de chegada>
+#
+#  Para especificar as seeds e quantidade de números aleatórios gerados para cada seed:
+#  Obs.: Se não utilizar o parametro RandomNumbersPerSeed, serão gerados 100000 números por seed
+#
+#       seeds:
+#           RandomNumbersPerSeed: <quantidade de numeros aleatorios>
+#           <seed>
+#           <seed>
 
 queues:
     QueueName: Q1

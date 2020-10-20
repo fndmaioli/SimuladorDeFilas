@@ -42,3 +42,11 @@ network:
 
 arrivals:
     Senha:1.0
+
+seeds:
+    RandomNumbersPerSeed: 100000
+    15
+    20
+    30
+    15
+    34

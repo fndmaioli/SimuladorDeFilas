@@ -7,8 +7,18 @@ public class FileReader {
 
     private HashMap<String, Queue> queueNetwork = new HashMap<String, Queue>();
     private ArrayList<Event> events = new ArrayList<Event>();
+    private ArrayList<Double> seeds = new ArrayList<Double>();
+    private int rndNumPerSeed = 100000;
 
     public FileReader() {}
+
+    public int getNumbersPerSeed() {
+        return rndNumPerSeed;
+    }
+
+    public ArrayList<Double> getSeeds() {
+        return new ArrayList<Double>(this.seeds);
+    }
 
     public ArrayList<Event> getEvents() {
         ArrayList<Event> auxArray = new ArrayList<Event>();
@@ -17,7 +27,7 @@ public class FileReader {
         }
         return auxArray;
     }
-    // IS PROBABLY CREATING 2 DIFFERENT INSTANCES FOR THE QUEUE, WHICH IS FUCKING THE RESULT
+    
     public HashMap<String, Queue> getQueueNetwork() {
 
         HashMap<String, Queue> auxMap = new HashMap<String, Queue>();
@@ -58,11 +68,35 @@ public class FileReader {
                 else if (line.startsWith("network:")) {
                     readNetworkInput(input);
                 }
+                else if (line.startsWith("seeds:")) {
+                    readSeedsInput(input);
+                }
             }
             input.close();
         } catch (Exception e) {
             e.printStackTrace();
         }   
+    }
+
+    public void readSeedsInput(Scanner input) {
+        String line = "a";
+
+        while(!line.isBlank() && input.hasNextLine()) {
+
+            line = input.nextLine().strip();
+            if (line.startsWith("#") || line.isBlank()) {
+                continue;
+            }
+
+            if (line.startsWith("RandomNumbersPerSeed:")) {
+                String[] lineArray = line.split(":");
+                this.rndNumPerSeed = Integer.parseInt(lineArray[1].strip());
+            } 
+            else {
+                double auxSeed = Double.parseDouble(line.strip());
+                seeds.add(auxSeed);
+            }
+        }
     }
 
     public void readArrivalsInput(Scanner input) {
