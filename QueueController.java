@@ -8,15 +8,12 @@ public class QueueController {
     public ArrayList<Event> eventsSchedule = new ArrayList<Event>();
     public RandomNumberGenerator randGen;
 
-    public int count;
-
     public QueueController(HashMap<String, Queue> queueNetwork, ArrayList<Event> events, int numPerSeed) {
         this.queueNetwork = queueNetwork;
         for(Event event : events) {
             scheduleEvent(event);
         }
-        this.randGen = new RandomNumberGenerator();
-        this.count = numPerSeed;
+        this.randGen = new RandomNumberGenerator(numPerSeed);
     }
 
     public QueueController(HashMap<String, Queue> queueNetwork, ArrayList<Event> events, double seed, int numPerSeed) {
@@ -24,13 +21,12 @@ public class QueueController {
         for(Event event : events) {
             scheduleEvent(event);
         }
-        this.randGen = new RandomNumberGenerator(seed);
-        this.count = numPerSeed;
+        this.randGen = new RandomNumberGenerator(seed, numPerSeed);
     }
 
     public void runSimulation() {
         Event nextEvent;
-        while (count > 0) {
+        while (this.randGen.count > 0) {
             
             nextEvent = eventsSchedule.remove(0);
             if (nextEvent.type == EventType.ARRIVAL) {
@@ -55,7 +51,13 @@ public class QueueController {
             // se fila <= 1
             if (arrivalQueue.queueCount <= arrivalQueue.servers) {
                 // agenda saida
-                String destination = arrivalQueue.getDestination(randGen.generateNewEventTime(0,1));
+                String destination = "";
+                if (arrivalQueue.didGenerateRndNumber()) {
+                    destination = arrivalQueue.getDestination(randGen.generateNewEventTime(0,1));
+                } else {
+                    destination = arrivalQueue.getDestination(1.0);
+                }
+                
                 if (destination.isEmpty()) {
                     double eventTime = randGen.generateNewEventTime(arrivalQueue.minService, arrivalQueue.maxService);
                     scheduleEvent(new Event(EventType.DEPARTURE, eventTime, arrival.queue));
@@ -87,7 +89,13 @@ public class QueueController {
         // se fila >= servers
         if (departureQueue.queueCount >= departureQueue.servers) {
             // agenda saida
-            String destination = departureQueue.getDestination(randGen.generateNewEventTime(0,1));
+            String destination = "";
+            if (departureQueue.didGenerateRndNumber()) {
+                destination = departureQueue.getDestination(randGen.generateNewEventTime(0,1));
+            } else {
+                destination = departureQueue.getDestination(1.0);
+            }
+
             if (destination.isEmpty()) {
                 double eventTime = randGen.generateNewEventTime(departureQueue.minService, departureQueue.maxService);
                 scheduleEvent(new Event(EventType.DEPARTURE, eventTime, departure.queue));
@@ -109,7 +117,13 @@ public class QueueController {
             changeQueue.queueCount--;
         }
         if (changeQueue.queueCount >= changeQueue.servers) {
-            String destination = changeQueue.getDestination(randGen.generateNewEventTime(0,1));
+            String destination = "";
+            if (changeQueue.didGenerateRndNumber()) {
+                destination = changeQueue.getDestination(randGen.generateNewEventTime(0,1));
+            } else {
+                destination = changeQueue.getDestination(1.0);
+            }
+
             if (destination.isEmpty()) {
                 double eventTime = randGen.generateNewEventTime(changeQueue.minService, changeQueue.maxService);
                 scheduleEvent(new Event(EventType.DEPARTURE, eventTime, change.queue));
@@ -122,7 +136,13 @@ public class QueueController {
         if (changeNextQueue.queueCount < changeNextQueue.capacity) {
             changeNextQueue.queueCount ++;
             if (changeNextQueue.queueCount <= changeNextQueue.servers) { 
-                String destination = changeNextQueue.getDestination(randGen.generateNewEventTime(0,1));
+                String destination = "";
+                if (changeNextQueue.didGenerateRndNumber()) {
+                    destination = changeNextQueue.getDestination(randGen.generateNewEventTime(0,1));
+                } else {
+                    destination = changeNextQueue.getDestination(1.0);
+                }
+
                 if (destination.isEmpty()) {
                     double eventTime = randGen.generateNewEventTime(changeNextQueue.minService, changeNextQueue.maxService);
                     scheduleEvent(new Event(EventType.DEPARTURE, eventTime, change.nextQueue));
@@ -142,11 +162,9 @@ public class QueueController {
         for(int i=0; i<eventsSchedule.size(); i++) {
             if(event.time < eventsSchedule.get(i).time) {
                 eventsSchedule.add(i, event);  
-                this.count--;
                 return;
             }
         }
         eventsSchedule.add(event);
-        this.count--;
     }
 }

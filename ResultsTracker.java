@@ -39,7 +39,7 @@ public class ResultsTracker {
 
     public void printResults() {
 
-        System.out.println("Tempo total: " + this.time/5);
+        System.out.println("Tempo total: " + this.time/this.numberOfSimulations);
         for(String keyName : queuesResult.keySet()) {
             System.out.println("Probabilidade de cada estado da fila: " + keyName);
             for(Integer key : queuesResult.get(keyName).queueStates.keySet()) {
@@ -86,7 +86,7 @@ public class ResultsTracker {
         double sum = 0.0;
         for(Integer key : queue.queueStates.keySet()) {
             if (key == 0 || key == -1) { continue; }
-            sum += (queue.queueStates.get(key)/this.time) * (getSmallerValue(key, (int) queue.capacity)/(int) queue.capacity);
+            sum += (queue.queueStates.get(key)/this.time) * (Integer.min(key, (int) queue.capacity)/(int) queue.capacity);
         }
         System.out.println("Utilização: " + new DecimalFormat("#.##").format(sum));
     }
@@ -94,12 +94,5 @@ public class ResultsTracker {
     // Cálculo do Tempo de Resposta
     public void responseTime(double averagePopulation, double flowRate) {
         System.out.println("Tempo de resposta: " + new DecimalFormat("#.##").format(averagePopulation/flowRate));
-    }
-
-    public int getSmallerValue(int val1, int val2) {
-        if(val1 < val2) {
-            return val1;
-        }
-        return val2;
     }
 }

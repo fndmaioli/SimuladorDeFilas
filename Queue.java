@@ -50,10 +50,17 @@ public class Queue {
         }
     }
 
+    public boolean didGenerateRndNumber() {
+        if (targets.size() <= 1) {
+            return false;
+        }
+        return true;
+    }
+
     public String getDestination(double probability) {
         if (targets.size() != 0) {
             for(Target target: targets) {
-                if (probability < target.prob) { 
+                if (probability <= target.prob) { 
                     return target.target;
                 }
             }
@@ -80,9 +87,6 @@ public class Queue {
         if (queueStates.containsKey(-1)) {
             // atualiza a quantidade de clientes perdidos
             queueStates.replace(-1, queueStates.get(-1)+1);
-        } 
-        // else {
-        //     queueStates.put(-1, 1.0);
-        // }
+        }
     }
 }
