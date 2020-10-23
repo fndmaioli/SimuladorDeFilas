@@ -33,23 +33,49 @@
 #           RandomNumbersPerSeed: <quantidade de numeros aleatorios>
 #           <seed>
 #           <seed>
+#
+#   Para executar o programa primeiro é necessário o compilar:
+#       
+#       javac *.java
+#
+#   Em seguida para executar utilize o seguinte comando:
+#
+#       java Main <nome do arquivo de entrada>
+#
+#   Por exemplo: java Main inputFile.txt
 
 queues:
-    QueueName: Q1
-    servers: 2
-    capacity: 3
-    minArrival: 2 
-    maxArrival: 3
-    minService: 2
-    maxService: 5
-    QueueName: Q2
+    QueueName: F1
     servers: 1
-    capacity: 3
-    minService: 3
-    maxService: 5
+    minArrival: 1.0
+    maxArrival: 4.0
+    minService: 1
+    maxService: 1.5
+    QueueName: F2
+    servers: 3
+    capacity: 5
+    minService: 5.0
+    maxService: 10.0
+    QueueName: F3
+    servers: 2
+    capacity: 8
+    minService: 10.0
+    maxService: 20.0
 
 network: 
-    Q1:Q2-1.0 
+    F1:F2-0.8
+    F1:F3-0.2
+    F2:F1-0.3
+    F2:F3-0.5
+    F3:F2-0.7
 
 arrivals:
-    Q1:2.5
+    F1:1.0
+
+seeds:
+    RandomNumbersPerSeed: 100000
+    15
+#    20
+#    30
+#    15
+#    34
