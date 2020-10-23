@@ -5,12 +5,13 @@ public class ResultsTracker {
 
     public HashMap<String, Queue> queuesResult = new HashMap<String, Queue>();
     public Double time;
-    public int numberOfSimulations = 0;
+    public int numberOfSimulations = 0; // Indica quantas simulações foram realizadas
 
     public ResultsTracker() {
         this.time = 0.0;
     }
 
+    // Acumula os resultados da simulação aos resultados de todas simulações
     public void addResults(HashMap<String, Queue> newResults) {
         for(String queueKey : newResults.keySet()) {
             if (queuesResult.containsKey(queueKey)) {
@@ -32,11 +33,13 @@ public class ResultsTracker {
         }
     }
 
+    // Acumula o tempo da simulação ao tempo de todas simulações
     public void addTime(Double time) {
         this.numberOfSimulations++;
         this.time += time;
     }
 
+    // Printa a média dos resultados das simulações
     public void printResults() {
 
         System.out.println("Tempo total: " + this.time/this.numberOfSimulations);

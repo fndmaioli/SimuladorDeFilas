@@ -16,10 +16,12 @@ public class FileReader {
         return rndNumPerSeed;
     }
 
+    // retorna uma nova instancia do Array de seeds para cada simulação
     public ArrayList<Double> getSeeds() {
         return new ArrayList<Double>(this.seeds);
     }
 
+    // retorna uma nova instancia do Array com cada Event pre-agendado
     public ArrayList<Event> getEvents() {
         ArrayList<Event> auxArray = new ArrayList<Event>();
         for(Event ev: events) {
@@ -28,6 +30,7 @@ public class FileReader {
         return auxArray;
     }
     
+    // retorna uma nova instancia do HashMap com cada Queue
     public HashMap<String, Queue> getQueueNetwork() {
 
         HashMap<String, Queue> auxMap = new HashMap<String, Queue>();
