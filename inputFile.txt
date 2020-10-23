@@ -17,7 +17,8 @@
 #           MaxService: <tempo maximo para ocorrer 1 atendimento e sair da fila>
 #
 #  Para especificar o modo que as filas se ligam:
-#  Obs.: Não deve-se especificar a probabilidade de um cliente sair da fila e ir embora/não entrar em outra fila
+#  Obs.: Não deve-se especificar a probabilidade de um cliente sair da fila e não entrar em 
+#        nenhuma outra fila (sair do modelo)
 #
 #       network:
 #           <nome da fila>: <nome da fila alvo>-<probabilidade entre 0.0 e 1.0>
@@ -34,7 +35,8 @@
 #           <seed>
 #           <seed>
 #
-#   Para executar o programa primeiro é necessário o compilar:
+#   Para executar o programa,
+#   primeiro é necessário o compilar caso os arquivos .class ainda não tenham sido criados:
 #       
 #       javac *.java
 #
