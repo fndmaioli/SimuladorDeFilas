@@ -69,7 +69,7 @@ public class ResultsTracker {
             if (key == 0 || key == -1) { continue; }
             sum += key * (queue.queueStates.get(key)/this.time);
         }
-        System.out.println("População média: " + new DecimalFormat("#.##").format(sum));
+        System.out.println("População média: " + new DecimalFormat("#.##").format(sum) + " clientes");
         return sum;
     }
 
@@ -78,9 +78,9 @@ public class ResultsTracker {
         double sum = 0.0;
         for(Integer key : queue.queueStates.keySet()) {
             if (key == 0 || key == -1) { continue; }
-            sum += (queue.queueStates.get(key)/this.time) * ((queue.maxService + queue.minService)/2);
+            sum += (queue.queueStates.get(key)/this.time) * (60/((queue.maxService + queue.minService)/2));
         }
-        System.out.println("Vazão: " + new DecimalFormat("#.##").format(sum));
+        System.out.println("Vazão: " + new DecimalFormat("#.##").format(sum) + " clientes por hora");
         return sum;
     }
 
@@ -89,13 +89,13 @@ public class ResultsTracker {
         double sum = 0.0;
         for(Integer key : queue.queueStates.keySet()) {
             if (key == 0 || key == -1) { continue; }
-            sum += (queue.queueStates.get(key)/this.time) * (Integer.min(key, (int) queue.capacity)/(int) queue.capacity);
+            sum += (queue.queueStates.get(key)/this.time) * (Integer.min(key, (int) queue.servers)/(int) queue.servers);
         }
-        System.out.println("Utilização: " + new DecimalFormat("#.##").format(sum));
+        System.out.println("Utilização: " + new DecimalFormat("#.##").format(sum*100) + "%");
     }
 
     // Cálculo do Tempo de Resposta
     public void responseTime(double averagePopulation, double flowRate) {
-        System.out.println("Tempo de resposta: " + new DecimalFormat("#.##").format(averagePopulation/flowRate));
+        System.out.println("Tempo de resposta: " + new DecimalFormat("#.##").format((60 * averagePopulation/flowRate)) + " minutos");
     }
 }
